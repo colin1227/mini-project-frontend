@@ -1,16 +1,18 @@
 import React from 'react';
-import { Header } from 'semantic-ui-react';
+import { Header, Button, Container } from 'semantic-ui-react';
 
 import { Link } from 'react-router-dom';
 
 
-const HeaderApp = () => {
+const HeaderApp = (props) => {
   return (
     <Header>
-      <ul>
-        <li><Link to="/">Login</Link></li>
-        <li><Link to="/movies">Movies</Link></li>
-      </ul>
+      <Container>
+        <Button><Link to="/">Login</Link></Button>
+        <Button><Link to="/movies">Movies</Link></Button>
+        <Button><Link to="/auth">Registration</Link></Button>
+        <Button onClick={props.logOut}>Logout</Button>
+      </Container>
     </Header>
     )
 }

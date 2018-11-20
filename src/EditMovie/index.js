@@ -3,7 +3,7 @@ import { Modal, Form, Button, Label, Header } from 'semantic-ui-react';
 
 
 const EditMovie = (props) => {
-  console.log(props)
+  // console.log(props, 'these are props in edit movie')
   return (
     <Modal open={props.open}>
       <Header>Edit Movie</Header>

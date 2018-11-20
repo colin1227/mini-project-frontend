@@ -5,6 +5,7 @@ import EditMovie from '../EditMovie';
 import { Grid } from 'semantic-ui-react';
 import getCookie from 'js-cookie';
 
+
 class MovieContainer extends Component {
   constructor(){
     super();
@@ -14,12 +15,12 @@ class MovieContainer extends Component {
       movieToEdit: {
         title: '',
         description: '',
-        _id: ''
+        id: ''
       },
       showEditModal: false
     }
   }
-
+  //GET MOVIES
   getMovies = async () => {
     // Where We will make our fetch call to get all the movies
     // Where We will make our fetch call to get all the movies
@@ -39,7 +40,7 @@ class MovieContainer extends Component {
     /// Where you call this.getMovies
     this.getMovies().then((movies)=> {
       if (movies.message === 'Must be logged in to see this data'){
-        alert('You must be logged in to view movies!!')
+        //alert('You must be logged in to view movies!!')
       } else {
         this.setState({
           movies: movies.data
@@ -49,13 +50,14 @@ class MovieContainer extends Component {
       console.log(err, 'this is the error')
     })
   }
-  
+  //CREATE
   addMovie = async (movie, e) => {
     // .bind arguments take presidence over every other argument
     e.preventDefault();
     console.log(movie);
     try {
       const csrfCookie = getCookie('csrftoken');
+      console.log(typeof csrfCookie, csrfCookie, 'csrf token/cookie')
       const createdMovie = await fetch('http://localhost:8000/movies/', {
         method: 'POST',
         credentials: 'include',
@@ -65,14 +67,18 @@ class MovieContainer extends Component {
           'X-CSRFToken': csrfCookie
         }
       });
+      console.log(createdMovie)
       const parsedResponse = await createdMovie.json();
+      console.log(parsedResponse, 'response')
       this.setState({movies: [...this.state.movies, parsedResponse.data]})
 
     } catch(err){
       console.log('error')
-      console.log(err)
+      console.log(err, 'this is the error')
     }
   }
+
+  //DELETE
   deleteMovie = async (id) => {
     const csrfCookie = getCookie('csrftoken');
     console.log(typeof csrfCookie, csrfCookie, 'csrf token/cookie')
@@ -93,6 +99,8 @@ class MovieContainer extends Component {
     this.setState({
       movies: this.state.movies.filter((movie) => movie.id !== id )})
   }
+
+
   handleEditChange = (e) => {
 
     this.setState({
@@ -113,11 +121,12 @@ class MovieContainer extends Component {
     e.preventDefault()
     try {
       const csrfCookie = getCookie('csrftoken');
+      
       const editResponse = await fetch('http://localhost:8000/movies/' + this.state.movieToEdit.id + '/', {
         method: 'PUT',
         body: JSON.stringify({
           title: this.state.movieToEdit.title,
-          description: parseInt(this.state.movieToEdit.description)
+          description: this.state.movieToEdit.description
         }),
         credentials: 'include',
         headers: {
@@ -125,19 +134,22 @@ class MovieContainer extends Component {
           'X-CSRFToken': csrfCookie
         }
       });
+      
       const editResponseParsed = await editResponse.json();
+      
       const newEditedMovie = this.state.movies.map((movie) => {
         if(movie.id === editResponseParsed.data.id){
           movie = editResponseParsed.data
         }
         return movie        
       });
+
       this.setState({
         showEditModal: false,
         movies: newEditedMovie
       });            
     } catch(err) {
-        console.log(err)      
+        console.log(err)
     }
   }
   openAndEdit = (movieFromTheList) => {
@@ -151,7 +163,7 @@ class MovieContainer extends Component {
     })
   }
   render(){
-    console.log(this.state)
+    // console.log(this.state, 'this is state')
     return (
       <Grid columns={2} divided textAlign='center' style={{ height: '100%' }} verticalAlign='top' stackable>
         <Grid.Row>
